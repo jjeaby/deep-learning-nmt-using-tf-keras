@@ -19,27 +19,28 @@ h5py
 ### Installing
 
 A step by step series of examples that tell you have to get a development env running
-
-clone the repo
-
-```
-git clone https://github.com/thecodacus/english-japanese-translater-tf-keras.git
-cd english-japanese-translater-tf-keras
-```
-
+ 
 To Train 
 
 ```
-python train.py
+python seq2seqTrain.py.py
 ```
-To Test 
+To Input Test 
 
 ```
-python test.py
+python seq2seqTest.py.py
+```
+
+To Test Code Run 
+
+```
+python -m unittest discover ./ "*Test.py"
 ```
 ## Authors
 
-* **Anirban Kar** - *Blog* - [thecodacus.com](https://thecodacus.com)
+* **Lee Yong JIN** - *Blog* - [jjeaby.ga](http://jjeaby.ga)
+
+* Original Reference  :  **Anirban Kar** - *Blog* - [thecodacus.com](https://thecodacus.com)
 
 
 ## Acknowledgments
