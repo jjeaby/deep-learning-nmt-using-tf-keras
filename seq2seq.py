@@ -63,7 +63,7 @@ class Seq2Seq:
         # Define the model that will turn
         # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
         self.trainingModel = Model([encoder_inputs, decoder_inputs], decoder_outputs)
-        self.trainingModel.compile(optimizer='rmsprop', loss='categorical_crossentropy')
+        self.trainingModel.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
         # Inference setup:
 
@@ -78,16 +78,23 @@ class Seq2Seq:
         self.decoder_model = Model([decoder_inputs] + decoder_states_inputs, [decoder_outputs] + decoder_states)
 
     def trainModel(self, encoder_input_data, decoder_input_data, decoder_target_data, batch_size=10, epochs=1):
+        early_stopping = EarlyStopping(patience=50, monitor='loss', mode='auto', min_delta=0)
         tb_hist = keras.callbacks.TensorBoard(log_dir='tblogs', histogram_freq=0, write_graph=True, write_images=True)
 
 
         hist = self.trainingModel.fit([encoder_input_data, decoder_input_data], decoder_target_data,
                                       batch_size=batch_size,
-                                      epochs=epochs, callbacks=[tb_hist])
+                                      epochs=epochs, callbacks=[early_stopping])
 
         print(hist.history['loss'])
+
+        #모델 세이브
+        self.trainingModel.save('s2s.h5')
+
+
         # hist 를 이용하여 loss 그래프 그리기
         #self.historyLossGraph(hist)
+
 
 
     def historyLossGraph(self, hist):
@@ -99,7 +106,7 @@ class Seq2Seq:
         loss_ax.legend(loc='upper left')
         plt.show()
 
-        self.trainingModel.save('s2s.h5')
+
 
     def loadWeights(self):
         self.trainingModel.load_weights('s2s.h5')
