@@ -1,11 +1,9 @@
-import tensorflow as tf
 import matplotlib.pyplot as plt
-
+from tensorflow.python import keras
 from tensorflow.python.keras.models import Model
 from tensorflow.python.keras.layers import Input
 from tensorflow.python.keras.layers import LSTM
 from tensorflow.python.keras.layers import Dense
-from tensorflow.python import keras
 from tensorflow.python.keras.callbacks import EarlyStopping
 
 import numpy as np
@@ -78,24 +76,21 @@ class Seq2Seq:
         self.decoder_model = Model([decoder_inputs] + decoder_states_inputs, [decoder_outputs] + decoder_states)
 
     def trainModel(self, encoder_input_data, decoder_input_data, decoder_target_data, batch_size=10, epochs=1):
-        early_stopping = EarlyStopping(patience=50, monitor='loss', mode='auto', min_delta=0)
-        tb_hist = keras.callbacks.TensorBoard(log_dir='tblogs', histogram_freq=0, write_graph=True, write_images=True)
-
+        earlyStopping = EarlyStopping(patience=50, monitor='loss', mode='auto', min_delta=0)
+        tensorBoard = keras.callbacks.TensorBoard(log_dir='tblogs', histogram_freq=1, write_graph=True,
+                                                  write_grads=True, write_images=False)
 
         hist = self.trainingModel.fit([encoder_input_data, decoder_input_data], decoder_target_data,
                                       batch_size=batch_size,
-                                      epochs=epochs, callbacks=[early_stopping])
+                                      epochs=epochs, callbacks=[earlyStopping])
 
         print(hist.history['loss'])
 
-        #모델 세이브
+        # 모델 세이브
         self.trainingModel.save('s2s.h5')
 
-
         # hist 를 이용하여 loss 그래프 그리기
-        #self.historyLossGraph(hist)
-
-
+        # self.historyLossGraph(hist)
 
     def historyLossGraph(self, hist):
         loss_ax = plt.subplot()
@@ -105,8 +100,6 @@ class Seq2Seq:
 
         loss_ax.legend(loc='upper left')
         plt.show()
-
-
 
     def loadWeights(self):
         self.trainingModel.load_weights('s2s.h5')
